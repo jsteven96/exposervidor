@@ -4,11 +4,11 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>Servidor NGINX</title>
 
 		<link rel="stylesheet" href="css/reset.css">
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+		<link rel="stylesheet" href="css/theme/white.css">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/monokai.css">
@@ -25,8 +25,175 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section id="themes">
+					<h2>Servidor NGINX</h2>
+					<a>Javier Felipe Castañeda</a><br>
+					<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/white.css'); return false;">20141020049</a><br>
+					<a>Javier Steven Pérez Fernández</a><br>
+					<a>20141020074</a><br>
+					<!--<a > esto es importante</a> <br>
+					<a >algo mas</a>-->
+				</section>
+				<section>
+					<section>
+						<h2>¿Qué es NGINX?</h2>
+						<p>
+							Es software código abierto que se puede utilizar como servidor web, servidor proxy inverso, software de balanceo de carga,
+							servidor de difusión de medios, y mucho más.
+						</p>
+					</section>
+					<section>
+						<h2>NGINX como servidor web</h2>
+						<p>
+							Un administrador de servidor web debe tener en cuenta una serie de factores con el objetivo de montar un sitio, aspectos como
+							tráfico del sitio, formas de uso, contenido del sitio (ya sea estático y dinámico), frameworks utilizados, entre otras cosas.
+							NGINX ofrece un conjunto de ventajas frente al uso de otros servidores.
+						</p>
+					</section>
+					<section>
+						<ol>
+							<li>Excelente rendimiento aún en momentos de alto tráfico</li>
+							<li>Manejo de recursos óptimo</li>
+							<li>Uso de múltiples dominios utilizando una misma dirección IP</li>
+							<li>Posibilidad de modularización de la configuración de diferentes contenidos</li>
+							<li>Énfasis en seguridad</li>
+						</ol>
+					</section>
+					<section data-state="customevent">
+							<h2>Proceso de instalación del servidor NGINX en distribuciones basadas en debian (Ubuntu)</h2>
+							<p>
+							El primer paso es abrir la terminal, se puede hacer de forma gráfica o con la combinación<code> CTRL-ALT-T </code>.
+							</p>
+							<!-- <pre><code class="javascript" data-trim contenteditable style="font-size: 18px;">
+		Reveal.addEventListener( 'customevent', function() {
+			console.log( '"customevent" has fired' );
+		} );
+							</code></pre> -->
+							
+						</section>
+						<section>
+								<p>Actualizamos la caché de instalaciones usando el comando</p>
+								<pre><code class="hljs html">sudo apt-get update</code></pre>
+								<p>Desde los repositorios de Ubuntu instalamos nginx usando el comando</p>
+								<pre><code class="hljs html">sudo apt-get install nginx</code></pre>
+								<p>Para verificar que haya quedado instalado, y ver qué versión quedó instalada, usamos:</p>
+								<pre><code class="hljs html">sudo nginx -v</code></pre>
+						</section>
+						<section>
+								<p>Nos dirigimos al directorio en el que se encuentran los archivos de base del servidor</p>
+								<pre><code class="hljs html">cd /etc/nginx</code></pre>
+								<p>El punto de partida de la creación del servidor es la creación del contenido que se va a publicar.
+									Para tener todo organizado vamos a crear un directorio llamado prueba que contenga un archivo de tipo
+									html.
+								</p>
+								<pre><code class="hljs html">mkdir -p ~/Escritorio/prueba</code></pre>
+								<pre><code class="hljs html">nano ~/Escritorio/prueba/index.html</code></pre>
+								
+						</section>
+						<section>
+							<p>Se introduce el contenido que se desee en el archivo index.html, por ejemplo</p>
+							<pre><code class="hljs" data-trim data-line-numbers>
+								&lt;html&gt;
+									&lt;head&gt;
+									&lt;title&gt;Prueba&lt;/title&gt;
+									&lt;/head&gt;
+									&lt;body&gt;
+									&lt;p&gt;Esto es una página de prueba alojada en el servidor NGINX&lt;/p&gt;
+									&lt;/body&gt;
+								&lt;/html&gt;
+									</code></pre>
+							<p></p>
+							<p>Al terminar la edición, con la combinación <code>CTRL+O</code> se guardan los cambios y con <code>CTRL+X</code></p>
+						</section>
+						<section>
+							<p>Ahora que ya se realizó el contenido vamos a configurar el servidor http para mostrar dicho contenido. Nos dirigimos al 
+								directorio sites-available</p>
+							<pre><code class="hljs html">cd /etc/nginx/sites-available</code></pre>
+							<p>Modificamos el archivo default para evitar que sea el archivo de configuración por defecto</p>
+							<pre><code class="hljs html">sudo nano default</code></pre>
+							<p>Creamos un archivo llamado ejemplo.com</p>
+							<pre><code class="hljs html">sudo nano ejemplo.com</code></pre>
+							</section>
+						<section>
+							<pre><code class="hljs html">
+server{
+	listen (Dirección de localhost):(puerto);
+	listen [::]443;
+	listen 443 ssl;
+	server_name ejemplo.com www.ejemplo.com;
+	root /home/javier/Escritorio/prueba;
+	index index.html;
+}
+							</pre></code>
+							<p>Guardamos y cerramos el archivo. Ahora vamos a crear un enlace simbólico de nuestro archivo de configuración</p>
+							<pre><code class="hljs html">sudo ln -s /etc/nginx/sites-available/ejemplo.com /etc/nginx/sites-enabled/ejemplo.com</code>
+						</section>
+						<section>
+							<p>Verificamos que todos los archivos de configuración del servidor estén correctamente escritos.</p>
+							<pre><code class="hljs html">sudo nginx -t</code></pre>
+							<p>Si todo ha salido correctamente vamos a reiniciar el servicio de nginx para que se guarden los cambios.</p>
+							<pre><code class="hljs html">sudo systemctl restart nginx.service</code></pre>
+						</section>
+				</section>
+				<section>
+					<section>
+							<h2>NGINX como servidor Proxy inverso</h2>
+							<p>
+								Un servidor proxy inverso es un dispositivo de seguridad que suele desplegarse en la DMZ de una red para proteger a los servidores
+								HTTP de una intranet corporativa, realizando funciones de seguridad que protegen a los servidores internos de ataques de usuarios en
+								Internet.
+							</p>				
+					</section>
+					<section>
+							<h2>Ventajas del uso de NGINX como proxy inverso</h2>
+							<ol>
+								<li>
+								Administrador puede utilizar características de autenticación y control de acceso del servidor proxy inverso para controlar quién
+								puede acceder a los servidores internos y controlar a qué servidores puede acceder cada usuario individual.
+								</li>
+								<li>Todo el tráfico hacia los servidores de la intranet parece dirigido a una única dirección de red</li>
+								<li>Uso de múltiples dominios utilizando una misma dirección IP</li>
+								
+							</ol>
+					</section>
+					<section>
+						<h2>Instalación de servidor Proxy inverso</h2>
+						<p>Primero hay que crear un directorio raíz para el dominio</p>
+						<pre><code class="hljs html">sudo mkdir -p /var/www/html/miproxy</code></pre>
+						<p>Cambiamos los permisos en el directorio para permitir que Nginx acceda al contenido.</p>
+						<pre><code class="hljs html">sudo chown -R www-data:www-data /var/www/html
+sudo chmod -R 775 /var/www/html/
+						</code></pre>
+					</section>
+					<section>
+						<p>Luego creamos el archivo donde va a estar la configuración del proxy y lo modificamos usando</p>
+						<pre><code class="hljs html">sudo nano /etc/nginx/sites-available/miproxy</code></pre>
+						<p>Dentro del archivo ponemos lo siguiente:</p>
+						<pre><code class="hljs html">server {
+	listen 80;
+	listen [::]:80;
+	server_name  miproxy.com www.miproxy.com;
+
+	proxy_redirect           off;
+	proxy_set_header         X-Real-IP $remote_addr;
+	proxy_set_header         X-Forwarded-For $proxy_add_x_forwarded_for;
+	proxy_set_header         Host $http_host;
+
+	location / {
+			proxy_pass http://127.0.0.1;
+		}
+}
+						</code></pre>
+					</section>
+					<section>
+						<p>Guardamos el archivo y lo cerramos luego de terminar (Ctrl+o, Ctrl+x).
+							Habilitamos el sitio en Nginx usando el comando:
+							</p>
+							<pre><code class="hljs html">sudo ln -s /etc/nginx/sites-available/myproxy /etc/nginx/sites-enabled/</code></pre>
+							<p>Si el servidor quedó bien configurado, ingresando las direcciones www.miproxy.com y miproxy.com entrarémos a la página web que ya habíamos realizado.</p>
+					</section>
+
+				</section>
 			</div>
 		</div>
 
